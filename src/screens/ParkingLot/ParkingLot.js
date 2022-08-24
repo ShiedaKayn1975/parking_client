@@ -18,9 +18,11 @@ import { filters } from './filters'
 import ToolBarAction from '../../components/ToolBarAction'
 import { IconFilter } from '@tabler/icons'
 import { serviceAgent } from '../../api'
+import AsyncSelect from 'react-select/async';
+import { customStyles, makeId } from '../../utils';
 
 const schema = {
-  order_from: {
+  car_id: {
     presence: { allowEmpty: false, message: '^Required' },
   }
 }
@@ -63,6 +65,10 @@ const ParkingLot = (props) => {
       setMyParkingLots(response.data.parking_lots)
     })
   }
+
+  const loadOptions = (inputValue, loadingData) => {
+    return loadingData(inputValue)
+  };
 
   const getParkingLot = () => {
     const resource = new Resource("parking_lots")
@@ -157,81 +163,109 @@ const ParkingLot = (props) => {
     })
   }
 
-  const rentParkingLot = (parkingLot) => {
-    // FormModal.show({
-    //   title: "Rent parking lot",
-    //   schema: schema,
-    //   submitData: {
-    //     parkingLot: parkingLot
-    //   },
-    //   renderComponent: ({ submitData, handleChange }) => {
-    //     return (
-    //       <Grid container spacing={1}>
-    //         <Grid item xs={6}>
-    //           <Stack spacing={1}>
-    //             <b>From</b>
-    //             <TextField type={'datetime-local'} size='small' name='order_from' onChange={(event) => handleChange('order_from', event.target.value)} />
-    //             {submitData.errors.order_from && <span style={{ color: 'red' }}>{submitData.errors.order_from[0]}</span>}
-    //           </Stack>
-    //         </Grid>
-    //         <Grid item xs={6}>
-    //           <Stack spacing={1}>
-    //             <b>To</b>
-    //             <TextField type={'datetime-local'} size='small' name='order_to' onChange={(event) => handleChange('order_to', event.target.value)} />
-    //             {submitData.errors.order_to && <span style={{ color: 'red' }}>{submitData.errors.order_to[0]}</span>}
-    //           </Stack>
-    //         </Grid>
-    //       </Grid>
-    //     )
-    //   },
-    //   action: {
-    //     title: 'Submit',
-    //     onSubmit: (submitData, handleChange, ctx) => {
-    //       return new Promise((resolve, reject) => {
-    //         const formData = submitData.values
+  const orderParkingLot = (parkingLot) => {
+    FormModal.show({
+      title: "Order parking lot",
+      schema: schema,
+      submitData: {
+        parkingLot: parkingLot
+      },
+      renderComponent: ({ submitData, handleChange }) => {
+        return (
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <Stack spacing={1}>
+                <b>Choose a car</b>
+                <AsyncSelect
+                  className={"MuiFormControl-marginDense"}
+                  isSearchable
+                  menuPortalTarget={document.body}
+                  loadOptions={(inputValue) => loadOptions(inputValue, function loadingData(inputValue) {
+                    return new Promise(resolve => {
+                      const resource = new Resource('cars')
 
-    //         const resource = new Resource('parking_lots')
-    //         resource.client.commitAction({
-    //           id: submitData.values.parkingLot.id,
-    //           data: {
-    //             action_code: 'order_location',
-    //             action_data: {
-    //               order_from: formData.order_from,
-    //               order_to: formData.order_to
-    //             }
-    //           },
-    //           done: (response) => {
-    //             resolve(response)
-    //             toast.success("Success")
-    //             getParkingLot()
-    //           },
-    //           error: (error) => {
-    //             reject(error)
-    //           }
-    //         })
-    //       })
-    //     }
-    //   }
-    // })
-    const resource = new Resource('parking_lots')
-    resource.client.commitAction({
-      id: parkingLot.id,
-      data: {
-        action_code: 'order_location',
-        action_data: {
-          // order_from: formData.order_from,
-          // order_to: formData.order_to
+                      resource.client.fetchItems({
+                        filters: { name: inputValue },
+                        params:{
+                          include: 'car_type'
+                        },
+                        done: (response, meta) => {
+                          resolve(response.map(item => {
+                            return {
+                              id: item.id,
+                              name: item.license_plate + "/" + item.car_type.name
+                            }
+                          }))
+                        },
+                        error: (error) => {
+                          resolve([])
+                        }
+                      })
+                    })
+                  })
+                  }
+                  defaultOptions
+                  getOptionLabel={({ name }) => name}
+                  getOptionValue={({ id }) => id}
+                  onChange={(value) => {
+                    handleChange('car_id', value)
+                  }}
+                  value={submitData.values.car_id || null}
+                  styles={customStyles()}
+                />
+                {submitData.errors.car_id && <span style={{ color: 'red' }}>{submitData.errors.car_id[0]}</span>}
+              </Stack>
+            </Grid>
+          </Grid>
+        )
+      },
+      action: {
+        title: 'Submit',
+        onSubmit: (submitData, handleChange, ctx) => {
+          return new Promise((resolve, reject) => {
+            const formData = submitData.values
+
+            const resource = new Resource('parking_lots')
+            resource.client.commitAction({
+              id: submitData.values.parkingLot.id,
+              data: {
+                action_code: 'order_location',
+                action_data: {
+                  car_id: formData.car_id.id
+                }
+              },
+              done: (response) => {
+                resolve(response)
+                toast.success("Success")
+                getParkingLot()
+              },
+              error: (error) => {
+                reject(error)
+              }
+            })
+          })
         }
-      },
-      done: (response) => {
-        toast.success("Success")
-        getParkingLot()
-        getMyParkingLot()
-      },
-      error: (error) => {
-
       }
     })
+    // const resource = new Resource('parking_lots')
+    // resource.client.commitAction({
+    //   id: parkingLot.id,
+    //   data: {
+    //     action_code: 'order_location',
+    //     action_data: {
+    //       // order_from: formData.order_from,
+    //       // order_to: formData.order_to
+    //     }
+    //   },
+    //   done: (response) => {
+    //     toast.success("Success")
+    //     getParkingLot()
+    //     getMyParkingLot()
+    //   },
+    //   error: (error) => {
+
+    //   }
+    // })
   }
 
   const handleChangePage = (event, page) => {
@@ -262,81 +296,86 @@ const ParkingLot = (props) => {
         borderRadius={3}
         sx={{ paddingBottom: 2 }}
       >
-        <Grid container
-          sx={{
-            marginBottom: 2
-          }}
-        >
-          <Grid item xs={3}>
-            <Typography variant='h4'
+        {
+          myParkingLots.length > 0 &&
+          <div>
+            <Grid container
               sx={{
-                float: 'left',
-                marginLeft: 3,
-                marginTop: 2
+                marginBottom: 2
               }}
             >
-              My Parking Lots
-            </Typography>
-          </Grid>
-        </Grid>
-        <MainCard
-          sx={{
-            borderRadius: 2,
-            marginLeft: 2,
-            marginRight: 2,
-            minHeight: '10vh',
-            marginBottom: 2
-          }}
-        >
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableCell><Typography variant='h5' fontWeight={'bold'}>Name</Typography></TableCell>
-                <TableCell><Typography variant='h5' fontWeight={'bold'}>Status</Typography></TableCell>
-                <TableCell><Typography variant='h5' fontWeight={'bold'}>Car type</Typography></TableCell>
-                <TableCell><Typography variant='h5' fontWeight={'bold'}>Width(meter)</Typography></TableCell>
-                <TableCell><Typography variant='h5' fontWeight={'bold'}>Height(meter)</Typography></TableCell>
-                <TableCell><Typography variant='h5' fontWeight={'bold'}>Created At</Typography></TableCell>
-                <TableCell><Typography variant='h5' fontWeight={'bold'}>Action</Typography></TableCell>
-              </TableHead>
-              <TableBody>
-                {
-                  myParkingLots.map((parkingLot, index) => {
-                    return (
-                      <TableRow key={index} hover style={{ cursor: 'pointer' }}>
-                        <TableCell>{parkingLot.name}</TableCell>
-                        <TableCell>{parkingLotStatusMapping[parkingLot.status]}</TableCell>
-                        <TableCell>{parkingLot.car_type_name}</TableCell>
-                        <TableCell>{parkingLot.width}</TableCell>
-                        <TableCell>{parkingLot.height}</TableCell>
-                        <TableCell>{moment(parkingLot.created_at).format('lll')}</TableCell>
-                        <TableCell>
-                          {
-                            parkingLot.status == 2 &&
-                            <Stack direction={'row'} spacing={1}>
-                              <Button size='small' variant='contained' key={index} color='warning'
-                                onClick={() => cancelParkingLot(parkingLot)}
-                              >Cancel</Button>
-                              <Button size='small' variant='contained' key={index} color='success'
-                                onClick={() => parkedParkingLot(parkingLot)}
-                              >Parked</Button>
-                            </Stack>
-                          }
-                          {
-                            parkingLot.status == 3 &&
-                            <Button size='small' variant='contained' key={index} color='error'
-                              onClick={() => leaveParkingLot(parkingLot)}
-                            >Leave</Button>
-                          }
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })
-                }
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </MainCard>
+              <Grid item xs={3}>
+                <Typography variant='h4'
+                  sx={{
+                    float: 'left',
+                    marginLeft: 3,
+                    marginTop: 2
+                  }}
+                >
+                  My Parking Lots
+                </Typography>
+              </Grid>
+            </Grid>
+            <MainCard
+              sx={{
+                borderRadius: 2,
+                marginLeft: 2,
+                marginRight: 2,
+                minHeight: '10vh',
+                marginBottom: 2
+              }}
+            >
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableCell><Typography variant='h5' fontWeight={'bold'}>Name</Typography></TableCell>
+                    <TableCell><Typography variant='h5' fontWeight={'bold'}>Status</Typography></TableCell>
+                    <TableCell><Typography variant='h5' fontWeight={'bold'}>Car type</Typography></TableCell>
+                    <TableCell><Typography variant='h5' fontWeight={'bold'}>Width(meter)</Typography></TableCell>
+                    <TableCell><Typography variant='h5' fontWeight={'bold'}>Height(meter)</Typography></TableCell>
+                    <TableCell><Typography variant='h5' fontWeight={'bold'}>Created At</Typography></TableCell>
+                    <TableCell><Typography variant='h5' fontWeight={'bold'}>Action</Typography></TableCell>
+                  </TableHead>
+                  <TableBody>
+                    {
+                      myParkingLots.map((parkingLot, index) => {
+                        return (
+                          <TableRow key={index} hover style={{ cursor: 'pointer' }}>
+                            <TableCell>{parkingLot.name}</TableCell>
+                            <TableCell>{parkingLotStatusMapping[parkingLot.status]}</TableCell>
+                            <TableCell>{parkingLot.car_type_name}</TableCell>
+                            <TableCell>{parkingLot.width}</TableCell>
+                            <TableCell>{parkingLot.height}</TableCell>
+                            <TableCell>{moment(parkingLot.created_at).format('lll')}</TableCell>
+                            <TableCell>
+                              {
+                                parkingLot.status == 2 &&
+                                <Stack direction={'row'} spacing={1}>
+                                  <Button size='small' variant='contained' key={index} color='warning'
+                                    onClick={() => cancelParkingLot(parkingLot)}
+                                  >Cancel</Button>
+                                  <Button size='small' variant='contained' key={index} color='success'
+                                    onClick={() => parkedParkingLot(parkingLot)}
+                                  >Parked</Button>
+                                </Stack>
+                              }
+                              {
+                                parkingLot.status == 3 &&
+                                <Button size='small' variant='contained' key={index} color='error'
+                                  onClick={() => leaveParkingLot(parkingLot)}
+                                >Leave</Button>
+                              }
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })
+                    }
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </MainCard>
+          </div>
+        }
         <Divider sx={{ marginLeft: 2, marginRight: 2 }} />
         <Grid container
           sx={{
@@ -426,7 +465,7 @@ const ParkingLot = (props) => {
                           {
                             parkingLot.status == 1 &&
                             <Button size='small' variant='contained' key={index}
-                              onClick={() => rentParkingLot(parkingLot)}
+                              onClick={() => orderParkingLot(parkingLot)}
                             >Order</Button>
                           }
                         </TableCell>

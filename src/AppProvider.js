@@ -17,11 +17,11 @@ import { ProductDetail } from './screens/ProductDetail'
 import Cookies from 'universal-cookie'
 import AdminUser from './screens/AdminUsers'
 import { AdminVariant } from './screens/AdminVariant'
-import { OrderedParkingLot } from './screens/OrderedParkingLot'
 import { HistoryBuying } from './screens/HistoryBuying'
 import { useMsal } from "@azure/msal-react";
 import ParkingLot from './screens/ParkingLot/ParkingLot'
 import AdminParkingLot from './screens/AdminParkingLot'
+import MyCar from './screens/MyCar/MyCar'
 
 const adminComponents = [
   {
@@ -54,6 +54,10 @@ const components = [
   {
     path: '/account',
     component: Account
+  },
+  {
+    path: '/my_cars',
+    component: MyCar
   },
 ]
 

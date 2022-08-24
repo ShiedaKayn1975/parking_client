@@ -98,12 +98,12 @@ const AdminParkingLot = (props) => {
                 id  : id,
                 data: formData,
                 done: (response) => {
-                  toast.success("Create parking lot success")
+                  toast.success("Update parking lot success")
                   getParkingLot()
                   resolve(true)
                 },
                 error: (error) => {
-                  toast.success("Create parking lot error")
+                  toast.success("Update parking lot error")
                   resolve(false)
                 }
               })

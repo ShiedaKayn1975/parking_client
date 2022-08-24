@@ -1,7 +1,8 @@
-import { IconBuildingFactory, IconPaperBag } from '@tabler/icons';
+import { IconBuildingFactory, IconCar } from '@tabler/icons';
 
 const icons = {
-    IconBuildingFactory
+    IconBuildingFactory,
+    IconCar
 };
 
 const features = {
@@ -15,6 +16,13 @@ const features = {
             type: 'item',
             url: '/parking_lots',
             icon: icons.IconBuildingFactory,
+        },
+        {
+            id: 'my_cars',
+            title: 'My cars',
+            type: 'item',
+            url: '/my_cars',
+            icon: icons.IconCar,
         }
     ]
 };

@@ -20,7 +20,7 @@ const thumb = {
 const thumbInner = {
   display: 'flex',
   minWidth: 0,
-  overflow: 'hidden', 
+  overflow: 'hidden',
   position: 'relative'
 };
 
@@ -44,11 +44,11 @@ const Preview = (props) => {
               />
               {
                 props.onRemoveFile &&
-                <IconX style={{backgroundColor: 'white', cursor: 'pointer', position: 'absolute', top: 0, right: 0}}
-                onClick={() => {
-                  props.onRemoveFile(file.file_url)
-                }}
-              />
+                <IconX style={{ backgroundColor: 'white', cursor: 'pointer', position: 'absolute', top: 0, right: 0 }}
+                  onClick={() => {
+                    props.onRemoveFile(file.file_url)
+                  }}
+                />
               }
             </div>
           </div>
@@ -92,8 +92,8 @@ export default class MultiFileUploader extends Component {
 
         let fileInfos = [...this.state.fileInfos]
         fileInfos.push(response)
-        this.setState({ fileInfos },  () => {
-          if(this.props.onChange){
+        this.setState({ fileInfos }, () => {
+          if (this.props.onChange) {
             this.props.onChange(fileInfos.map(i => i.file_url))
           }
         })
@@ -149,12 +149,15 @@ export default class MultiFileUploader extends Component {
     if (files.length > 0) {
       this.setState({ selectedFiles: files });
     }
+    if (this.props.hideUploadButton) {
+      this.uploadFiles()
+    }
   }
 
   onRemoveFile = (file) => {
     let fileInfos = this.state.fileInfos.filter(f => f.file_url != file)
     this.setState({ fileInfos }, () => {
-      if(this.props.onChange){
+      if (this.props.onChange) {
         this.props.onChange(fileInfos.map(i => i.file_url))
       }
     })
@@ -199,39 +202,50 @@ export default class MultiFileUploader extends Component {
                         : selectedFiles.map((file) => file.name).join(", ")}
                     </div>
                   ) : (
-                    `Drag and drop files here, or click to select files`
+                    this.props.title ? this.props.title : `Kéo thả tệp vào đây, hoặc chọn từ máy`
                   )}
                 </div>
-                <aside className="selected-file-wrapper">
-                  <button
-                    className="btn btn-success"
-                    disabled={!selectedFiles}
-                    onClick={this.uploadFiles}
-                  >
-                    Upload
-                  </button>
-                </aside>
+                {
+                  !this.props.hideUploadButton &&
+                  <aside className="selected-file-wrapper">
+                    <button
+                      className="btn btn-success"
+                      disabled={!selectedFiles}
+                      onClick={this.uploadFiles}
+                    >
+                      Upload
+                    </button>
+                  </aside>
+                }
               </section>
             )}
           </Dropzone>
         </div>
 
-        {message.length > 0 && (
-          <div className="alert alert-secondary" role="alert">
-            <ul>
-              {message.map((item, i) => {
-                return <li key={i}>{item}</li>;
-              })}
-            </ul>
-          </div>
-        )}
-
-        {fileInfos.length > 0 && (
-          <Preview
-            files={fileInfos}
-            onRemoveFile={this.onRemoveFile}
-          />
-        )}
+        <div>
+          {
+            !this.props.hidePreview &&
+            <>
+              {message.length > 0 && (
+                <div className="alert alert-secondary" role="alert">
+                  <ul>
+                    {message.map((item, i) => {
+                      return <li key={i}>{item}</li>;
+                    })}
+                  </ul>
+                </div>
+              )}
+              {
+                fileInfos.length > 0 && (
+                  <Preview
+                    files={fileInfos}
+                    onRemoveFile={this.onRemoveFile}
+                  />
+                )
+              }
+            </>
+          }
+        </div>
       </div>
     );
   }

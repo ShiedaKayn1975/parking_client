@@ -109,7 +109,8 @@ module.exports = (env, argv) => {
     externals: {
       // global app config object
       config: JSON.stringify({
-        apiUrl: process.env.API_URL
+        apiUrl: process.env.API_URL,
+        uploadHost: process.env.UPLOAD_URL
       })
     },
   }

@@ -7,10 +7,9 @@ const customStyles = (error) => {
   return {
     control: (provided, state) => ({
       ...provided,
-      border: error ? '1px solid #fd5749' : '1px solid rgba(0,0,0,.4)',
-      backgroundColor: 'transparent !important',
-      height: '50px !important',
-      minHeight: '40px !important',
+      border: '1px solid #C4C4C4',
+      marginTop: 3,
+      backgroundColor: 'transparent'
     }),
     indicatorSeparator: (provided, state) => ({
       ...provided,
@@ -19,20 +18,20 @@ const customStyles = (error) => {
     placeholder: (provided, state) => ({
       ...provided,
       color: 'rgba(0, 0, 0, 0.38)',
-      fontSize: '14px',
-      whiteSpace: "nowrap"
+      fontSize: '14px'
     }),
     menuList: (provided, state) => ({
       ...provided,
-      maxHeight: 150
+      maxHeight: 200,
+      zIndex: 9999
     }),
     menu: (provided, state) => ({
-      // none of react-select's styles are passed to <Control />
-      // width: 200,
       ...provided,
-      zIndex: 1000,
-      // bottom: "100%",
-      // top: "auto",
+      zIndex: 9999
+    }),
+    menuPortal: (provided, state) => ({
+      ...provided,
+      zIndex: 9999
     })
   }
 }
