@@ -51,6 +51,7 @@ const Filter = (props) => {
   const [value, setValue] = useState({
     right: props.right
   })
+  const [ filters, setFilters ] = useState({})
 
   useEffect(() => {
     setValue({ ...value, right: props.right })
@@ -80,7 +81,7 @@ const Filter = (props) => {
         <Grid item xs={12}>
           <Grid container>
             <Grid item xs={6}>
-              <Typography variant='h3' padding={2}>Lọc</Typography>
+              <Typography variant='h3' padding={2}>Filters</Typography>
             </Grid>
             <Grid item xs={6}>
               <IconButton sx={{ float: 'right', padding: 2 }}
@@ -88,6 +89,7 @@ const Filter = (props) => {
               ><CloseIcon /></IconButton>
             </Grid>
             <Grid item xs={12} style={{ height: 'calc(100vh - 130px)', overflow: 'auto' }}>
+              { console.log(filters)}
               {props.filters && props.filters.map((options, index) => (
                 <div key={index}>
                   <Typography
@@ -110,19 +112,20 @@ const Filter = (props) => {
                           defaultOptions
                           isClearable
                           name={option.name}
-                          onChange={(value) => {
+                          onChange={(_value) => {
                             var e = {
                               target: {
                                 name: option.name,
-                                value
+                                value: _value
                               },
                             };
-                            props.onChange(e)
+                            const { name, value } = e.target;
+                            setFilters({ ...filters, [name]: value })
                           }}
                           getOptionLabel={(item) => item.name}
                           getOptionValue={(item) => item.id}
                           valueKey={option.valueKey || "id"}
-                          value={props.formState[option.name] || null}
+                          value={filters[option.name] || null}
                           styles={customStyles}
                         />
                       );
@@ -136,7 +139,6 @@ const Filter = (props) => {
         <Grid item xs={12}>
           <Divider />
         </Grid>
-
       </Grid>
       <Grid container spacing={2}
         sx={{ position: 'absolute', bottom: 0, height: 60, borderTop: '1px solid #ccc', width: '100%' }}
@@ -145,15 +147,15 @@ const Filter = (props) => {
           <Button
             color="primary"
             onClick={() => {
-              // if (props.onSearch) {
-              //   props.onSearch()
-              // }
+              if (props.onSearch) {
+                props.onSearch(filters)
+              }
               onClose()
             }}
             variant="contained"
             sx={{ float: 'left', marginLeft: 2 }}
           >
-            Lọc
+            Apply filters
           </Button>
         </Grid>
         <Grid item xs={6}>

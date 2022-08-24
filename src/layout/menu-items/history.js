@@ -1,6 +1,6 @@
-import { IconShoppingCart, IconZoomMoney, IconParking } from '@tabler/icons';
+import { IconZoomMoney, IconParking } from '@tabler/icons';
 
-const icons = { IconShoppingCart, IconZoomMoney, IconParking };
+const icons = { IconZoomMoney, IconParking };
 
 const history = {
     id: 'history',
@@ -9,9 +9,9 @@ const history = {
     children: [
         {
             id: 'buying',
-            title: 'Parking lots rented',
+            title: 'Ordered lots',
             type: 'item',
-            url: `/history/buying`,
+            url: `/history/rented`,
             icon: icons.IconParking,
             breadcrumbs: false
         },

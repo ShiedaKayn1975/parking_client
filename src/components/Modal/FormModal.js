@@ -30,8 +30,13 @@ export default class FormModal extends React.Component {
   show(config) {
     const submitData = Object.assign({}, this.state.submitData)
     if (config.submitData) {
-      submitData['values'] = config.submitData,
-        submitData['errors'] = {}
+      submitData['values'] = config.submitData
+      submitData['change'] = {}
+
+      submitData['errors'] = {}
+      if(config['mode']){
+        submitData['mode'] = config.mode
+      }
       submitData['isSubmiting'] = false
       submitData['isValid'] = true
     }
@@ -41,6 +46,7 @@ export default class FormModal extends React.Component {
   handleChange = (name, value) => {
     const submitData = Object.assign({}, this.state.submitData);
     submitData['values'][name] = value
+    submitData['change'][name] = value
     this.setState({ submitData })
   }
 
@@ -64,9 +70,9 @@ export default class FormModal extends React.Component {
     }
 
     if (this.state.submitData.errors && Object.keys(this.state.submitData.errors).length > 0) {
-      Object.keys(this.state.submitData.errors).forEach(item => {
-        toast.error(this.state.submitData.errors[item][0])
-      })
+      // Object.keys(this.state.submitData.errors).forEach(item => {
+      //   toast.error(this.state.submitData.errors[item][0])
+      // })
     } else {
       this.setState({ submitting: true })
       if(config.action.onSubmit){
@@ -124,7 +130,7 @@ export default class FormModal extends React.Component {
           <DialogActions>
             {
               config.action &&
-              <Button onClick={this.handleSubmit} variant='contained'>
+              <Button onClick={this.handleSubmit} variant='contained' size='small'>
                 {
                   submitting ?
                     <CircularProgress size={22} color='success' />
@@ -133,9 +139,9 @@ export default class FormModal extends React.Component {
                 }
               </Button>
             }
-            <Button onClick={this.handleClose} sx={{ marginRight: 2 }}
+            <Button onClick={this.handleClose} sx={{ marginRight: 2 }} size='small'
               variant='outlined'
-            >Huỷ</Button>
+            >Cancel</Button>
           </DialogActions>
         </Dialog>
       </div>

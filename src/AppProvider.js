@@ -16,34 +16,12 @@ import Account from './screens/Account/account'
 import { ProductDetail } from './screens/ProductDetail'
 import Cookies from 'universal-cookie'
 import AdminUser from './screens/AdminUsers'
-import AdminProduct from './screens/AdminProducts'
 import { AdminVariant } from './screens/AdminVariant'
-import { HistoryMoney } from './screens/HistoryMoney'
+import { OrderedParkingLot } from './screens/OrderedParkingLot'
 import { HistoryBuying } from './screens/HistoryBuying'
 import { useMsal } from "@azure/msal-react";
-
-const commonComponents = [
-  {
-    path: '/account',
-    component: Account
-  },
-  {
-    path: '/products/:id',
-    component: ProductDetail
-  },
-  {
-    path: '/products',
-    component: ProductDetail
-  },
-  {
-    path: '/history/buying',
-    component: HistoryBuying
-  },
-  {
-    path: '/history/add_money',
-    component: HistoryMoney
-  }
-]
+import ParkingLot from './screens/ParkingLot/ParkingLot'
+import AdminParkingLot from './screens/AdminParkingLot'
 
 const adminComponents = [
   {
@@ -55,22 +33,28 @@ const adminComponents = [
     component: AdminUser
   },
   {
-    path: '/admin/products',
-    component: AdminProduct
+    path: '/admin/parking_lots',
+    component: AdminParkingLot
   },
   {
     path: '/admin/variants',
     component: AdminVariant
   },
-  ...commonComponents
 ]
 
 const components = [
   {
     path: '/',
+    component: ParkingLot
+  },
+  {
+    path: '/parking_lots',
+    component: ParkingLot
+  },
+  {
+    path: '/account',
     component: Account
   },
-  ...commonComponents
 ]
 
 const loggerStore = store => next => action => {
@@ -190,7 +174,7 @@ const AppProvider = (props) => {
                       <Routes>
                         <Route element={<MainLayout />} >
                           {
-                            (currentUser.admin ? adminComponents : components).map((component, index) => {
+                            (currentUser.kind == 'admin' ? adminComponents : components).map((component, index) => {
                               return <Route key={index} path={component.path} element={
                                 <component.component history={appHistory} currentUser={currentUser} />
                               } />

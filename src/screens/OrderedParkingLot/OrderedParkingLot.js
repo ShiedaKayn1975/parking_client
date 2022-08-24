@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import PaperItem from '../../components/Paper/PaperItem'
 import { useTheme } from '@mui/material'
 import {
@@ -6,36 +6,13 @@ import {
   TableCell, Paper, Stack
 } from '@mui/material'
 import { MainCard } from '../../components/Card'
-import moment from 'moment'
 import { IconDatabaseOff } from '@tabler/icons'
 import 'moment/locale/vi'
-import TransactionResource from '../../resources/TransactionResource'
 import { toast } from 'react-toastify'
 
-var formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'VND',
-});
-
-const HistoryMoney = (props) => {
+const OrderedParkingLot = (props) => {
   const theme = useTheme()
   const [history, setHistory] = useState([])
-
-  useEffect(() => {
-    loadTransactions()
-  }, [])
-
-  const loadTransactions = () => {
-    TransactionResource.loader.fetchItems({
-      paging: { page: 1, perPage: 25 },
-      done: (response) => {
-        setHistory(response)
-      },
-      error: (error) => {
-        toast.error("Get product error")
-      }
-    })
-  }
 
   return (
     <>
@@ -51,14 +28,14 @@ const HistoryMoney = (props) => {
           }}
         >
           <Grid item xs={12}>
-            <Typography variant='h4'
+            <Typography variant='h3'
               sx={{
                 float: 'left',
                 marginLeft: 3,
                 marginTop: 2
               }}
             >
-              Lịch sử nạp tiền
+              Ordered lots
             </Typography>
           </Grid>
         </Grid>
@@ -77,14 +54,7 @@ const HistoryMoney = (props) => {
                 <TableCell width={'55%'}><Typography variant='h5' fontWeight={'bold'}>Đã nạp lúc</Typography></TableCell>
               </TableHead>
               <TableBody>
-                {
-                  history.map((item, index) => {
-                    return <TableRow key={index}>
-                      <TableCell>{formatter.format(item.amount)}</TableCell>
-                      <TableCell>{moment(item.created_at).locale('vi').fromNow()}</TableCell>
-                    </TableRow>
-                  })
-                }
+                
               </TableBody>
             </Table>
           </TableContainer>
@@ -105,4 +75,4 @@ const HistoryMoney = (props) => {
   )
 }
 
-export default HistoryMoney
+export default OrderedParkingLot

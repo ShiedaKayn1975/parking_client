@@ -14,16 +14,7 @@ import { toast } from 'react-toastify'
 import { tableCellClasses } from '@mui/material/TableCell';
 import { ActionableExceptionHandler } from '../../utils'
 import { formatter } from '../../utils'
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}))
+import Resource from '../../resources/Resource/resource'
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -59,7 +50,8 @@ const AdminUser = (props) => {
   }, [currentPage, perPage])
 
   const loadUsers = () => {
-    UserResource.loader.fetchItems({
+    const resource = new Resource('users')
+    resource.client.fetchItems({
       paging: { page: (currentPage || 1), perPage: perPage },
       done: (response, meta) => {
         setUsers(response)
@@ -75,8 +67,9 @@ const AdminUser = (props) => {
     const action_data = {
       active: event.target.checked
     }
+    const resource = new Resource('users')
 
-    UserResource.loader.commitAction({
+    resource.client.commitAction({
       id: row.id,
       data: {
         action_code: 'update_user_status',
@@ -140,12 +133,11 @@ const AdminUser = (props) => {
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="center" sx={{ width: '15%' }}>Name</StyledTableCell>
-                  <StyledTableCell align="center" sx={{ width: '20%' }}>Phone</StyledTableCell>
-                  <StyledTableCell align="center" sx={{ width: '20%' }}>Created At</StyledTableCell>
-                  <StyledTableCell align="center" sx={{ width: '15%' }}>Admin</StyledTableCell>
-                  <StyledTableCell align="center" sx={{ width: '15%' }}>Status</StyledTableCell>
-                  <StyledTableCell align="center" sx={{ width: '15%' }}>Balance</StyledTableCell>
+                  <TableCell align="center" sx={{ width: '20%' }}><Typography variant='h5' fontWeight={'bold'}>Email</Typography></TableCell>
+                  <TableCell align="center" sx={{ width: '20%' }}><Typography variant='h5' fontWeight={'bold'}>Display name</Typography></TableCell>
+                  <TableCell align="center" sx={{ width: '20%' }}><Typography variant='h5' fontWeight={'bold'}>Given name</Typography></TableCell>
+                  <TableCell align="center" sx={{ width: '20%' }}><Typography variant='h5' fontWeight={'bold'}>Created At</Typography></TableCell>
+                  <TableCell align="center" sx={{ width: '20%' }}><Typography variant='h5' fontWeight={'bold'}>Active</Typography></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -153,19 +145,18 @@ const AdminUser = (props) => {
                   <StyledTableRow key={row.id} sx={{ cursor: 'pointer' }}
                   // onClick={() => newProduct(row)}
                   >
-                    <StyledTableCell component="th" scope="row" align="center">
-                      {row.name}
-                    </StyledTableCell>
-                    <StyledTableCell align="center">{row.phone}</StyledTableCell>
-                    <StyledTableCell align="center">{moment(row.created_at).format('ll')}</StyledTableCell>
-                    <StyledTableCell align="center">{row.admin ? 'True' : 'False'}</StyledTableCell>
-                    <StyledTableCell align="center">
+                    <TableCell component="th" scope="row" align="center">
+                      {row.email}
+                    </TableCell>
+                    <TableCell align="center">{row.display_name}</TableCell>
+                    <TableCell align="center">{row.given_name}</TableCell>
+                    <TableCell align="center">{moment(row.created_at).format('ll')}</TableCell>
+                    <TableCell align="center">
                       <Switch checked={row.status == 'active'} onClick={(event) => {
                         event.stopPropagation()
                         handleUpdateActive(row, event)
                       }} />
-                    </StyledTableCell>
-                    <StyledTableCell align="center">{formatter.format(row.balance || 0)}</StyledTableCell>
+                    </TableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>

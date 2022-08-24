@@ -141,7 +141,38 @@ export default class JsonApiClient {
   }
 
   updateResource = (type, id, data, { done, error, resourcePath, params, relatives }) => {
+    if (!type) throw "Action updateResource: type is required"
 
+    let path = resourcePath || this.client.getResourcePath(type, id)
+
+    return this.client.patch(path, {
+      data: {
+        id: id,
+        type: type,
+        attributes: data
+      },
+      ...params
+    })
+      .then(response => {
+        let item = resourcesMapper(response.data)
+        let meta = parseResourceMeta(response.data)
+        if (item && relatives) {
+          this.buildRelatives(item, relatives, {
+            done: (item) => {
+              if (done) done(item, meta)
+            }, error: (errors) => {
+              if (error) error(errors)
+              if (done) done(item, meta)
+            }
+          })
+        } else {
+          if (done) done(item, meta)
+        }
+      })
+      .catch(event => {
+        console.error(event)
+        if (error) error(this.errorParser(event))
+      })
   }
 
   deleteResource = (type, id, { done, error, resourcePath }) => {

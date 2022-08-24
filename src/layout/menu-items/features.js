@@ -1,27 +1,20 @@
-import { IconReportMoney, IconTicket } from '@tabler/icons';
+import { IconBuildingFactory, IconPaperBag } from '@tabler/icons';
 
-const icons = { IconReportMoney, IconTicket };
+const icons = {
+    IconBuildingFactory
+};
 
 const features = {
     id: 'features',
-    title: 'Tính năng',
+    title: 'Features',
     type: 'group',
     children: [
         {
-            id: 'load_money',
-            title: 'Nạp tiền',
+            id: 'products',
+            title: 'Parking lots',
             type: 'item',
-            url: `/load_money`,
-            icon: icons.IconReportMoney,
-            breadcrumbs: false
-        },
-        {
-            id: 'my_ticket',
-            title: 'Ticket hỗ trợ',
-            type: 'item',
-            url: `/my_ticket`,
-            icon: icons.IconTicket,
-            breadcrumbs: false
+            url: '/parking_lots',
+            icon: icons.IconBuildingFactory,
         }
     ]
 };

@@ -8,13 +8,13 @@ import AppContext from '../../../../AppContext'
 
 const MenuList = () => {
     const context = useContext(AppContext)
-    const isAdmin = context.currentUser.admin
+    const kind = context.currentUser.kind == 'admin' ? 'admin' : 'customer'
     let items = {...menuItems}
-    if(!isAdmin){
-        items.items = items.items.filter(i => i.id != 'dashboard')
-    }
-
-    const navItems = items.items.map((item) => {
+    // if(!isAdmin){
+    //     items.items = items.items.filter(i => i.id != 'dashboard')
+    // }
+    
+    const navItems = items[kind].map((item) => {
         switch (item.type) {
             case 'group':
                 return <NavGroup key={item.id} item={item} />;

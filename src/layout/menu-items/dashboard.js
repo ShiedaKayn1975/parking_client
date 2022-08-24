@@ -1,6 +1,6 @@
-import { IconDashboard } from '@tabler/icons';
+import { IconDashboard, IconUser } from '@tabler/icons';
 
-const icons = { IconDashboard };
+const icons = { IconDashboard, IconUser };
 
 const dashboard = {
     id: 'dashboard',
@@ -8,35 +8,18 @@ const dashboard = {
     type: 'group',
     children: [
         {
-            id: 'default',
-            title: 'Admin',
-            type: 'collapse',
-            url: '/admin',
+            id: 'users',
+            title: 'Users',
+            type: 'item',
+            url: '/admin/users',
+            icon: icons.IconUser,
+        },
+        {
+            id: 'parking_lots',
+            title: 'Parking lots',
+            type: 'item',
+            url: '/admin/parking_lots',
             icon: icons.IconDashboard,
-            breadcrumbs: false,
-            children: [
-                {
-                    id: 'users',
-                    title: 'Users',
-                    type: 'item',
-                    url: '/admin/users',
-                    // target: true
-                },
-                {
-                    id: 'products',
-                    title: 'Products',
-                    type: 'item',
-                    url: '/admin/products',
-                    // target: true
-                },
-                {
-                    id: 'variants',
-                    title: 'Variants',
-                    type: 'item',
-                    url: '/admin/variants',
-                    // target: true
-                }
-            ]
         }
     ]
 };

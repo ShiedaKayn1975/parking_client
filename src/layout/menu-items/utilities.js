@@ -1,9 +1,7 @@
-import { IconShoppingCart, IconBuildingFactory, IconPaperBag } from '@tabler/icons';
+import { IconBuildingFactory, IconPaperBag } from '@tabler/icons';
 
 const icons = {
-    IconBuildingFactory,
-    IconShoppingCart,
-    IconPaperBag
+    IconBuildingFactory
 };
 
 const utilities = {
@@ -16,7 +14,7 @@ const utilities = {
             title: 'Parking lots',
             type: 'item',
             url: '/parking_lots',
-            icon: icons.IconShoppingCart,
+            icon: icons.IconBuildingFactory,
         }
     ]
 };

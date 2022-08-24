@@ -1,5 +1,7 @@
+import React from 'react'
 import { ActionableExceptionHandler } from "./ActionableErrorHandler";
 import { DefaultApiErrorHandler } from "./DefaultApiErrorHandler";
+import { Chip } from "@mui/material";
 
 const customStyles = (error) => {
   return {
@@ -35,12 +37,10 @@ const customStyles = (error) => {
   }
 }
 
-const productMapping = {
-  "bm": "BM",
-  "via_xmdn": 'Via XMDT + 902',
-  "via_normal": 'Via Thường Live ADS!',
-  "via_limit_50": 'Via Limit $50 + $250',
-  "clone": 'Clone các loại'
+const parkingLotStatusMapping = {
+  1: <Chip label="Active" color="primary" size='small' />,
+  2: <Chip label="Ordered" color="default" size='small' />,
+  3: <Chip label="Parked" color="error" size='small' />,
 }
 
 const makeId = (length) => {
@@ -63,6 +63,6 @@ export {
   DefaultApiErrorHandler, 
   customStyles,
   makeId,
-  productMapping,
-  formatter
+  formatter,
+  parkingLotStatusMapping
 }

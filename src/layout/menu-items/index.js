@@ -4,7 +4,8 @@ import history from './history';
 import features from './features';
 
 const menuItems = {
-    items: [dashboard, history, utilities]
+    admin: [dashboard],
+    customer: [features],
 };
 
 export default menuItems;
