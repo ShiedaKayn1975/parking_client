@@ -238,6 +238,7 @@ const ParkingLot = (props) => {
                 resolve(response)
                 toast.success("Success")
                 getParkingLot()
+                getMyParkingLot()
               },
               error: (error) => {
                 reject(error)
